@@ -16,8 +16,6 @@ def remove(name)
   delete_client.name_args = [name]
   delete_client.run
 
-  ## Add code to remove CloudKick here
-
 end
 
 
