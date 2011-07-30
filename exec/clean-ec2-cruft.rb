@@ -29,7 +29,7 @@ class Cleanup < Chef::Knife
     nodes_to_clean = nodes_to_clean.select { |n| ec2_id_list.all?{ |s| s != n.ec2.instance_id}}
 
     #Get corresponding clients
-    clients_to_clean = nodes_to_clean.map { |n| clients.show(n.name.to_s) }
+    clients_to_clean = nodes_to_clean.map { |n| clients.show(n.name) }
 
     #Confirm with User
     puts "Nodes For Deletion:"
