@@ -20,3 +20,4 @@ end
 
 
 remove(ARGV[2])
+exit 0
