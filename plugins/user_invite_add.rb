@@ -6,7 +6,7 @@ module UserPlugin
     def run
       if name_args.length < 1
         show_usage
-        ui.fatal("You must specify a username")
+        ui.fatal("You must specify a username.")
         exit 1
       end
       users = name_args[0]

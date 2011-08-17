@@ -5,7 +5,7 @@ module UserPlugin
     def run
       api_endpoint = "association_requests/"
       invited_users = rest.get_rest(api_endpoint).map { |i| i['username'] }
-      output(format_for_display(invited_users))
+      ui.output(invited_users)
     end
   end
 end
