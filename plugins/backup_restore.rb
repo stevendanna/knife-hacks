@@ -81,6 +81,8 @@ module ServerBackup
       files = Dir.glob(File.join(config[:backup_dir], component, "*.json"))
       files.each do |f|
         ui.msg "Updating #{component} from #{f}"
+        updated = loader.load_from(component, f)
+        updated.save
       end
     end
 
