@@ -1,0 +1,16 @@
+# Knife Hacks
+
+This repository contains bits of code that may be useful to people
+using Chef.  It is structured as follows:
+
+* `bootstraps/`: Bootstraps that can be used with knife bootstrap.
+  Place in `.chef/bootstrap/`
+* `exec`/: Scripts to be used with knife-exec
+* `plugins/`: An unorganized set of plugins that extend knife's
+  functionality. Place in `.chef/plugins/knife/`
+
+# Warning
+
+I place code here when I believe that it may be useful to me or others
+in the future.  But, the code here has not been tested extensively beyond
+my initial use of it.  Be extra wary of the `exec/` folder.
