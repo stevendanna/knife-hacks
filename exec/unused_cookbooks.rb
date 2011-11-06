@@ -1,4 +1,4 @@
-# unused_cookbooks.rb: List cookboosk that are note used by any nodes.
+# unused_cookbooks.rb: List cookbooks that are not used by any nodes.
 #
 
 # First, we get a list of all the cookbooks
