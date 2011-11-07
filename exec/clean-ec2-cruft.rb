@@ -49,3 +49,4 @@ end
 
 c = Cleanup.new
 c.clean
+exit 0
