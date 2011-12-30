@@ -21,6 +21,10 @@ require 'chef/node'
 module ServerBackup
   class BackupExport < Chef::Knife
 
+    deps do
+      require 'fileutils'
+    end
+
     banner "knife backup export [-d DIR]"
 
     option :backup_dir,
@@ -80,5 +84,3 @@ module ServerBackup
 
   end
 end
-
-
