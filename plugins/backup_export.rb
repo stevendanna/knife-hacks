@@ -51,9 +51,9 @@ module ServerBackup
     def data_bags
       ui.msg "Backing up data bags"
       dir = File.join(config[:backup_dir], "data_bags")
-      system("mkdir -p #{dir}")
+      FileUtils.mkdir_p(dir)
       Chef::DataBag.list.each do |bag_name, url|
-        system("mkdir -p #{File.join(dir, bag_name)}")
+        FileUtils.mkdir_p(File.join(dir, bag_name))
         Chef::DataBag.load(bag_name).each do |item_name, url|
           ui.msg "Backing up data bag #{bag_name} item #{item_name}"
           item = Chef::DataBagItem.load(bag_name, item_name)
@@ -67,7 +67,7 @@ module ServerBackup
     def backup_standard(component, klass)
       ui.msg "Backing up #{component}"
       dir = File.join(config[:backup_dir], component)
-      system("mkdir -p #{dir}")
+      FileUtils.mkdir_p(dir)
       klass.list.each do |component_name, url|
         next if component == "environments" && component_name == "_default"
         ui.msg "Backing up #{component} #{component_name}"
