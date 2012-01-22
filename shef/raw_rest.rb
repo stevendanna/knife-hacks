@@ -12,7 +12,7 @@ class ShefRawREST < Shef::ShefREST
   end
 
   def api_request(method, url, headers={}, data=false)
-    json_body = data.to_json
+    json_body = data ? data.to_json : nil
     # Force encoding to binary to fix SSL related EOFErrors
     # cf. http://tickets.opscode.com/browse/CHEF-2363
     # http://redmine.ruby-lang.org/issues/5233
