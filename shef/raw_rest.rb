@@ -12,7 +12,7 @@ class ShefRawREST < Shef::ShefREST
   end
 
   def api_request(method, url, headers={}, data=false)
-    json_body = data
+    json_body = data.to_json
     # Force encoding to binary to fix SSL related EOFErrors
     # cf. http://tickets.opscode.com/browse/CHEF-2363
     # http://redmine.ruby-lang.org/issues/5233
@@ -44,5 +44,3 @@ class ShefRawREST < Shef::ShefREST
     end
   end
 end
-
-(raw_api = ShefRawREST.new(Chef::Config[:chef_server_url])) && true
