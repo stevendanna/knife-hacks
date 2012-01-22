@@ -16,6 +16,7 @@ actual API response can be hidden.
 To use this:
 
     eval(File.read("/path/to/knife-hacks/shef/raw_rest.rb"))
+    raw_api = ShefRawREST.new(Chef::Config[:chef_server_url])
     raw_api.get("nodes")
 
 # Load Node's Run List
