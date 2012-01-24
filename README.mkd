@@ -3,11 +3,13 @@
 This repository contains bits of code that may be useful to people
 using Chef.  It is structured as follows:
 
-* `bootstraps/`: Bootstraps that can be used with knife bootstrap.
-  Place in `.chef/bootstrap/`
-* `exec`/: Scripts to be used with knife-exec
+* `bootstraps/`: knife-bootstrap scripts.  Place in `.chef/bootstrap/`
+* `exec/`: knife-exec scripts.
 * `plugins/`: An unorganized set of plugins that extend knife's
-  functionality. Place in `.chef/plugins/knife/`
+  functionality. Place in `.chef/plugins/knife/`.
+* `shef/`: Scripts suitable for interactive use with Shef.  These can
+  technically also work with knife-exec.
+* `shell/`: Shell scripts that making working with Knife easier.
 
 # Warning
 
@@ -20,6 +22,7 @@ my initial use of it.  Be extra wary of the `exec/` folder.
 Unless otherwise specified all works in this repository are
 
 Copyright 2011 Opscode, Inc
+
 Author:: Steven Danna (steve@opcsode.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
