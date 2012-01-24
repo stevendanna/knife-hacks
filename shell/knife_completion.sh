@@ -12,7 +12,7 @@ fi
 _flatten_command() {
     local cur
     _get_comp_words_by_ref cur
-    echo ${COMP_WORDS[*]} |  $SED -r -e 's/[[:space:]]-[[:alnum:]-]+//' \
+    echo ${COMP_WORDS[*]} |  $SED -r -e 's/[[:space:]]-[[:alnum:]-]+//g' \
         -e "s/[[:space:]]*${cur}$//" -e 's/[[:space:]]+/_/g'
 }
 
