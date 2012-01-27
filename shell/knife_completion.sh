@@ -31,7 +31,7 @@ _chef_nodes() {
 }
 
 _chef_local_cookbooks() {
-    test -d cookbooks && find cookbooks -maxdepth 1 -type d -printf '%P\n'
+    test -d cookbooks && find cookbooks -maxdepth 1 -type d -print0 | xargs -0 basename
 }
 
 _chef_remote_cookbooks() {
