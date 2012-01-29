@@ -86,3 +86,9 @@ resource in the resource_collection.
 
 This is most useful when you have used `setup_run` to load the
 resources from a node's run_list.
+
+# DoppelGanger Fix
+
+`doppelganger_fix` contains a monkey-patch that fixes CHEF-2869 and
+allows you to use `become_node`. This is a temporary fix until the
+problem is resolved in Chef.
