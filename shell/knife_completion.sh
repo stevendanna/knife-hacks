@@ -113,6 +113,12 @@ _knife() {
         knife_node_show|knife_node_edit|knife_node_delete)
             candidates=$(_chef_nodes)
             ;;
+        knife_node_run_list)
+            candidates="add remove"
+            ;;
+        knife_node_run_list_add|knife_node_run_list_remove)
+            candidates=$(_chef_nodes)
+            ;;
         knife_client_show|knife_client_edit|knife_client_delete)
             candidates=$(_chef_clients)
             ;;
