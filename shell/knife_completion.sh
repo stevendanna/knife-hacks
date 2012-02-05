@@ -9,11 +9,15 @@ else
     SED="sed"
 fi
 
+_escape() {
+    echo "$1" | sed -r s'/([^a-zA-Z0-9])/\\\1/g'
+}
+
 _flatten_command() {
     local cur
     _get_comp_words_by_ref cur
     echo ${COMP_WORDS[*]} |  $SED -r -e 's/[[:space:]]-[[:alnum:]-]+//g' \
-        -e "s/[[:space:]]*${cur}$//" -e 's/[[:space:]]+/_/g'
+        -e "s/[[:space:]]*$(_escape $cur)\$//" -e 's/[[:space:]]+/_/g'
 }
 
 # Helper functions to get lists of
