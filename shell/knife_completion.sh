@@ -10,7 +10,7 @@ else
 fi
 
 _escape() {
-    echo "$1" | sed -r s'/([^a-zA-Z0-9])/\\\1/g'
+    echo "$1" | $SED -r s'/([^a-zA-Z0-9])/\\\1/g'
 }
 
 _flatten_command() {
