@@ -39,6 +39,7 @@ module ServerBackup
       roles
       data_bags
       environments
+      cookbooks
     end
 
     def nodes
@@ -75,6 +76,30 @@ module ServerBackup
 
     end
 
+    def cookbooks
+      ui.msg "Restoring cookbooks"
+      Dir.chdir(File.join(config[:backup_dir], cookbooks))
+      Dir.foreach(".").each do |f|
+        next if f.match(/^\./)
+        puts f
+        if File.symlink?(f)
+          puts f
+          File.unlink f
+          next
+        end
+        name = f.gsub(/\-\d+\.\d+\.\d+$/,'')
+        if File.symlink?(name)
+          File.unlink name
+        end
+        File.symlink(f, name)
+        ui.msg "Restoring cookbook #{name}"
+        upload = Chef::Knife::CookbookUpload.new
+        upload.config[:cookbook_path] = "."
+        upload.name_args = [ name ]
+        upload.run
+      end
+    end
+    
     def restore_standard(component, klass)
       loader = Chef::Knife::Core::ObjectLoader.new(klass, ui)
       ui.msg "Restoring #{component}"
