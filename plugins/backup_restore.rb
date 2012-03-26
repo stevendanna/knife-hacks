@@ -21,8 +21,10 @@ module ServerBackup
 
     deps do
       require 'chef/knife/core/object_loader'
+      require 'chef/cookbook_loader'
+      require 'chef/cookbook_uploader'
     end
-
+    
     banner "knife backup restore [-d DIR]"
 
     option :backup_dir,
