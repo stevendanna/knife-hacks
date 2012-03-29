@@ -15,6 +15,14 @@
 #
 
 
+class Chef
+  class Knife
+    class CookbookUpload < Knife
+      def check_dependencies(cookbook)
+      end
+    end
+  end
+end
 
 module ServerBackup
   class BackupRestore < Chef::Knife
@@ -63,7 +71,15 @@ module ServerBackup
       dbags.each do |bag|
         bag_name = File.basename(bag)
         ui.msg "Creating data bag #{bag_name}"
-        rest.post_rest("data", { "name" => bag_name})
+        begin
+          rest.post_rest("data", { "name" => bag_name})
+        rescue Net::HTTPServerException => e
+          if e.response.code.to_s == "409"
+            ui.warn "Data bag already exists #{bag_name}"
+          else
+            raise
+          end
+        end
         dbag_items = Dir.glob(File.join(bag, "*"))
         dbag_items.each do |item_path|
           item_name = File.basename(item_path, '.json')
@@ -75,12 +91,11 @@ module ServerBackup
           dbag.save
         end
       end
-
     end
 
     def cookbooks
       ui.msg "Restoring cookbooks"
-      Dir.chdir(File.join(config[:backup_dir], cookbooks))
+      Dir.chdir(File.join(config[:backup_dir], 'cookbooks'))
       Dir.foreach(".").each do |f|
         next if f.match(/^\./)
         puts f
