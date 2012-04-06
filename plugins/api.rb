@@ -1,6 +1,11 @@
 class Api < Chef::Knife
   banner "knife api METHOD PATH [REQUEST BODY] (options)"
 
+  deps do
+    require 'chef/webui_user'
+    require 'chef/api_client'
+  end
+
   option :raw,
   :long => "--raw",
   :short => "-R",
