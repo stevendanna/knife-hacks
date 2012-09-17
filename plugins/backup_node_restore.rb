@@ -55,17 +55,5 @@ module ServerBackup
       updated = loader.load_from(dir, "#{chef_node_or_client_name}.json")
       updated.save
     end
-
-    #def restore_standard(component, klass)
-    #  loader = Chef::Knife::Core::ObjectLoader.new(klass, ui)
-    #  ui.msg "Restoring #{component}"
-    #  files = Dir.glob(File.join(config[:backup_dir], component, "*.json"))
-    #  files.each do |f|
-    #    ui.msg "Updating #{component} from #{f}"
-    #    updated = loader.load_from(component, f)
-    #    updated.save
-    #  end
-    #end
-
   end
 end
