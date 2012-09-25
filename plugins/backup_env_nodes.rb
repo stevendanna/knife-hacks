@@ -13,6 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# About this Plugin:
+#
+# This plugin will backup all nodes in a given environment plus the
+# environment file. You can specify -A to include the api client associated
+# with the nodes being backed up. This plugin will also restore an environment
+# and its associated nodes/api clients.
+#
+# Restoring api clients in hosted or private chef is not advised as it creates
+# association/permission problems between the client and the node. The suggestion
+# is to provide a validation pem and let the node re register, creating a new
+# api client. 
+#
+# Migrating Environments and Nodes: you can pass -c /path/to/new/knife.rb to
+# us this tool for migrating env's and nodes to a new chef server.
+#
+# How I use this tool:
+# knife backup envnodes my_env
+# knife bootstrap -d migrate ... (Use a bootstapper to change the chef-client config on each node)
+# knife backup envnodes restore my_env -c /path/to/new/chef/servers/knife.rb
+#
 
 require 'chef/node'
 require 'chef/api_client'
@@ -25,18 +45,23 @@ module ServerBackup
       require 'fileutils'
     end
 
-    banner "knife backup envnodes ENVNAME" 
+    banner "knife backup envnodes ENVNAME [-d DIR] [--api-client | -A]" 
 
     option :backup_dir,
-    :short => "-d DIR",
-    :long => "--backup-directory DIR",
-    :description => "Store backup data in DIR.  DIR will be created if it does not already exist.",
-    :default => Chef::Config[:knife][:chef_server_backup_dir] ? Chef::Config[:knife][:chef_server_backup_dir] : File.join(".chef", "chef_server_backup")
+      :short => "-d DIR",
+      :long => "--backup-directory DIR",
+      :description => "Store backup data in DIR.  DIR will be created if it does not already exist.",
+      :default => Chef::Config[:knife][:chef_server_backup_dir] ? Chef::Config[:knife][:chef_server_backup_dir] : File.join(".chef", "chef_server_backup")
 
+    option :api_client,
+      :short => "-A",
+      :long => "--api-client",
+      :description => "Include API Client objects associated with each node in the backup",
+      :default => false
 
     def run
       unless name_args.size == 1
-        puts "You need to provide a NODENAME to backup"
+        puts "You need to provide a ENVNAME to backup"
         show_usage
         exit 1
       end
@@ -50,10 +75,8 @@ module ServerBackup
       query = "chef_environment:#{chef_env}"
 
       query_nodes.search('node', query) do |node_item|
-        ui.msg "Backing up #{node_item} node"
-        bbackup(node_item.name, Chef::Node, chef_env)
-        ui.msg "Backing up #{node_item} client"
-        backup(node_item.name, Chef::ApiClient, chef_env)
+        backup(node_item.name, Chef::Node, chef_env)
+        backup(node_item.name, Chef::ApiClient, chef_env) if config[:api_client]
       end
 
       dir = File.join(config[:backup_dir], "nodes_in_env/#{chef_env}")
@@ -86,13 +109,20 @@ module ServerBackup
       require 'chef/knife/core/object_loader'
     end
 
-    banner "knife backup envnodes restore ENVNAME"
+    banner "knife backup envnodes restore ENVNAME [-d DIR] [--api-client | -A]"
 
     option :backup_dir,
-    :short => "-d DIR",
-    :long => "--backup-directory DIR",
-    :description => "Store backup data in DIR.  DIR will be created if it does not already exist.",
-    :default => Chef::Config[:knife][:chef_server_backup_dir] ? Chef::Config[:knife][:chef_server_backup_dir] : File.join(".chef", "chef_server_backup")
+      :short => "-d DIR",
+      :long => "--backup-directory DIR",
+      :description => "Store backup data in DIR.  DIR will be created if it does not already exist.",
+      :default => Chef::Config[:knife][:chef_server_backup_dir] ? Chef::Config[:knife][:chef_server_backup_dir] : File.join(".chef", "chef_server_backup")
+
+    option :api_client,
+      :short => "-A",
+      :long => "--api-client",
+      :description => "Include API Client objects associated with each node in the backup",
+      :default => false
+
 
     def run
       unless name_args.size == 1
@@ -101,19 +131,16 @@ module ServerBackup
         exit 1
       end
 
-      ui.warn "This will overwrite existing data!"
-      ui.warn "Backup is at least 1 day old" if (Time.now - File.atime(config[:backup_dir])) > 86400
-      ui.confirm "Do you want to restore backup, possibly overwriting exisitng data"
       chef_env = name_args.first 
-      #restore(chef_env, Chef::Environment)
-      #restore(chef_env, Chef::Node)
-      #restore(chef_env, Chef::ApiClient)
+      ui.warn "This will overwrite existing data!"
+      ui.warn "Backup is at least 1 day old" if (Time.now - File.atime(File.join(config[:backup_dir], 'nodes_in_env', chef_env, "#{chef_env}.json"))) > 86400
+      ui.confirm "Do you want to restore backup, possibly overwriting exisitng data"
 
-      [Chef::Environment, Chef::Node, Chef::ApiClient].each do |klass|
+      klasses = [Chef::Environment, Chef::Node]
+      klasses << Chef::ApiClient if config[:api_client]
+      klasses.each do |klass|
         restore(chef_env, klass)
       end
-
-      
     end
 
 
@@ -123,10 +150,10 @@ module ServerBackup
       ui.msg "Restoring #{klass_name}"
       backup_dir = File.join(config[:backup_dir], 'nodes_in_env', env)
       if klass == Chef::Environment
-        dir = File.join(config[:backup_dir], 'nodes_in_env', env)
+        dir = backup_dir
         files = Dir.glob(File.join(dir, "#{env}.json"))
       else
-        dir = File.join(config[:backup_dir], 'nodes_in_env', env, klass_name)
+        dir = File.join(backup_dir, klass_name)
         files = Dir.glob(File.join(dir, "*.json"))
       end
       files.each do |f|
