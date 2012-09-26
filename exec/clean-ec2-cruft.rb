@@ -26,18 +26,18 @@ class Cleanup < Chef::Knife
     ec2_id_list.compact!
 
     #Filter active EC2 instances from node list
-    nodes_to_clean = nodes_to_clean.select { |n| ec2_id_list.all?{ |s| s != n.ec2.instance_id}}
+    nodes_to_clean = nodes_to_clean.select { |n| ec2_id_list.all?{ |s| n['ec2']['instance_id'] && s != n['ec2']['instance_id']}}
 
     #Get corresponding clients
     clients_to_clean = nodes_to_clean.map { |n| clients.show(n.name) }
 
     #Confirm with User
-    puts "Nodes For Deletion:"
-    puts nodes_to_clean
-    puts "-"*6
-    puts "Clients for Deletion:"
-    puts clients_to_clean
-    puts "-"*6
+    ui.msg "Nodes For Deletion:"
+    pp nodes_to_clean
+    ui.msg "-"*6
+    ui.msg "Clients for Deletion:"
+    pp clients_to_clean
+    ui.msg "-"*6
     ui.confirm("Do you want to delete these objects")
 
     # Delete!
