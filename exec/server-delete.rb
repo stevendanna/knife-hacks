@@ -8,15 +8,15 @@ def remove(name)
   int_domain = mynode[:route53][:int_domain]
   aws_creds = Chef::EncryptedDataBagItem.load("passwords", "aws")
 
-  puts "iid #{instance_id} zid #{zone_id} intd #{int_domain}"
+  #puts "iid #{instance_id} zid #{zone_id} intd #{int_domain}"
   ## Delete the Route53 DNS record
   r53 = Fog::DNS::new( :provider => "aws",
                        :aws_access_key_id => aws_creds["aws_access_key_id"],
                        :aws_secret_access_key => aws_creds["aws_secret_access_key"])
   zone = r53.zones.get(zone_id)
-  puts "looking for #{name}.#{int_domain}."
+  #puts "looking for #{name}.#{int_domain}."
   record = zone.records.get("#{name}.#{int_domain}.")
-  puts "found #{record}"
+  #puts "found #{record}"
   if record.nil?
     puts "No DNS records found; skipping DNS deletion."
   else
