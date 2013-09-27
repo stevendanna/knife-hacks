@@ -50,7 +50,7 @@ _chef_roles() {
     _output_on_success knife role list
 }
 
-_chef_environemnts() {
+_chef_environments() {
     _output_on_success knife environment list
 }
 
