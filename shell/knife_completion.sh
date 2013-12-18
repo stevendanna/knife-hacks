@@ -26,8 +26,8 @@ _flatten_command() {
 
 _output_on_success() {
     local out
-    out=$($* 2>/dev/null)
-    [ $? -eq 0 ] && echo $out
+    out=$("$@" 2>/dev/null)
+    [ $? -eq 0 ] && echo "$out"
 }
 
 _chef_nodes() {
