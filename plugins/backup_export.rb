@@ -38,6 +38,7 @@ module ServerBackup
       roles
       data_bags
       environments
+      cookbooks
     end
 
     def nodes
@@ -64,6 +65,23 @@ module ServerBackup
           File.open(File.join(dir, bag_name, "#{item_name}.json"), "w") do |dbag_file|
             dbag_file.print(item.raw_data.to_json)
           end
+        end
+      end
+    end
+
+    def cookbooks
+      ui.msg "Backing up cookbooks"
+      dir = File.join(config[:backup_dir], "cookbooks")
+      FileUtils.mkdir_p(dir)
+      rest.get_rest("/cookbooks?num_versions=all").each do |cookbook_name, versions|
+        versions['versions'].map { |v| v['version'] }.each do |version_name|
+          ui.msg "Backing up cookbook: #{cookbook_name}-#{version_name}"
+          download = Chef::Knife::CookbookDownload.new
+          download.name_args = [ cookbook_name, version_name ]
+          download.config[:latest] = false
+          download.config[:download_directory] = dir
+          download.config[:force] = true
+          download.run
         end
       end
     end
