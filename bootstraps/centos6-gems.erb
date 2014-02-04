@@ -2,8 +2,8 @@ bash -c '
 <%= "export http_proxy=\"#{knife_config[:bootstrap_proxy]}\"" if knife_config[:bootstrap_proxy] -%>
 
 if [ ! -f /usr/bin/chef-client ]; then
-  curl <%= "--proxy=on " if knife_config[:bootstrap_proxy] %> http://download.fedora.redhat.com/pub/epel/6/i386/epel-release-6-5.noarch.rpm -O
-  rpm -Uvh epel-release-6-5.noarch.rpm
+  curl <%= "--proxy=on " if knife_config[:bootstrap_proxy] %> http://download.fedora.redhat.com/pub/epel/6/i386/epel-release-6-8.noarch.rpm --location -O
+  rpm -Uvh epel-release-6-8.noarch.rpm
   yum install -y ruby ruby-devel gcc gcc-c++ automake autoconf make
   cd /tmp
   curl <%= "--proxy=on " if knife_config[:bootstrap_proxy] %>http://production.cf.rubygems.org/rubygems/rubygems-1.6.2.tgz -O
@@ -12,7 +12,7 @@ if [ ! -f /usr/bin/chef-client ]; then
   ruby setup.rb --no-format-executable
 fi
 
-gem update --system
+gem update --system 1.8.25
 gem update
 gem install ohai --no-rdoc --no-ri --verbose
 gem install chef --no-rdoc --no-ri --verbose <%= bootstrap_version_string %>
